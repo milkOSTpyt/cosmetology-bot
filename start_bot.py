@@ -1,7 +1,7 @@
 from aiogram.utils import executor
 
-from loader import dp
-import middlewares, filters, handlers
+from bot.loader import dp
+from bot import middlewares, filters, handlers
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 import json
 
-from utils import config
+from bot.utils import config
 
 
 class FileManager:

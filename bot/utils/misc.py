@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 
-from loader import bot
+from bot.loader import bot
 
 
 async def delete_old_message(message_obj: types.Message, state: FSMContext):

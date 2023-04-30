@@ -2,7 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.middlewares import BaseMiddleware
 
-from loader import bot, storage
+from bot.loader import bot, storage
 
 
 class MessageFilter(BaseMiddleware):

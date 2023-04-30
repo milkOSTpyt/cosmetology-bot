@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.types import InlineKeyboardMarkup
 
-from managers import Manager
+from bot.managers import Manager
 
 
 async def get_category_menu() -> InlineKeyboardMarkup:

@@ -1,4 +1,4 @@
-from managers.file_manager import FileManager
+from bot.managers.file_manager import FileManager
 
 
 class Manager:

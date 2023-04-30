@@ -2,7 +2,7 @@ from aiogram import Bot
 from aiogram.dispatcher import Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-from utils.config import BOT_TOKEN
+from bot.utils.config import BOT_TOKEN
 
 
 bot = Bot(token=BOT_TOKEN)

@@ -2,10 +2,10 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import CommandStart
 
-from keyboards import get_category_menu
-from loader import dp, bot
-from managers import Manager
-from utils.misc import delete_old_message
+from bot.keyboards import get_category_menu
+from bot.loader import dp, bot
+from bot.managers import Manager
+from bot.utils.misc import delete_old_message
 
 
 @dp.message_handler(CommandStart(), state='*')

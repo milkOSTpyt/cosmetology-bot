@@ -3,13 +3,13 @@ from asyncio import sleep
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 
-from filters import IsCategoryExists
-from filters.category_exists import IsServicesExists
-from keyboards import get_services_inline, get_detail_inline, get_contact_button, delete_ok, get_category_menu
-from loader import dp, bot
-from managers import Manager
-from states import ServicesState
-from utils import config
+from bot.filters import IsCategoryExists
+from bot.filters.category_exists import IsServicesExists
+from bot.keyboards import get_services_inline, get_detail_inline, get_contact_button, delete_ok, get_category_menu
+from bot.loader import dp, bot
+from bot.managers import Manager
+from bot.states import ServicesState
+from bot.utils import config
 
 
 @dp.message_handler(text=['Отмена'], state=ServicesState.CONTACT)
