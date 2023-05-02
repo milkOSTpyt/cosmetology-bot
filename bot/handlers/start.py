@@ -2,6 +2,7 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import CommandStart
 
+from bot.db.managers import ClientManager
 from bot.keyboards import get_category_menu
 from bot.loader import dp, bot
 from bot.managers import Manager
@@ -10,6 +11,13 @@ from bot.utils.misc import delete_old_message
 
 @dp.message_handler(CommandStart(), state='*')
 async def start_command(message: types.Message, state: FSMContext):
+    await ClientManager.update_or_create(
+        user_id=message.from_user.id,
+        name=message.from_user.full_name,
+        username=message.from_user.username,
+        phone_number=message.contact.phone_number if message.contact else None
+    )  # Add or update client in database
+
     state_data = await state.get_data()
     if message_del := state_data.get('description_message'):
         await bot.delete_message(message.chat.id, message_del)
