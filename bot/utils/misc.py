@@ -1,15 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 
-from bot.db.models import Base
 from bot.loader import bot
-from bot.utils.config import engine
-
-
-async def init_models() -> None:
-    async with engine.begin() as conn:
-        # await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
 
 
 async def delete_old_message(message_obj: types.Message, state: FSMContext) -> None:

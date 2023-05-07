@@ -3,11 +3,11 @@ from asyncio import sleep
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 
+from bot.db.managers import DbManager
 from bot.filters import IsCategoryExists
 from bot.filters.category_exists import IsServicesExists
 from bot.keyboards import get_services_inline, get_detail_inline, get_contact_button, delete_ok, get_category_menu
 from bot.loader import dp, bot
-from bot.managers import Manager
 from bot.states import ServicesState
 from bot.utils import config
 
@@ -27,7 +27,7 @@ async def get_contact(message: types.Message, state: FSMContext):
     await bot.delete_message(message.chat.id, state_data.get('consulting_message'))
     await bot.delete_message(message.chat.id, message.message_id)
 
-    # send notify to admin
+    # send notify to admin_2
     await bot.send_message(config.ADMIN,
                            config.NOTIFY_CONSULTING.format(service, f'+{message.contact.phone_number}'),
                            reply_markup=await delete_ok())
@@ -66,56 +66,36 @@ async def delete_consulting_message(callback: types.CallbackQuery, state: FSMCon
 @dp.callback_query_handler(lambda c: c.data == 'back_to_services', state=ServicesState.DETAIL)
 async def back_to_services(callback: types.CallbackQuery, state: FSMContext):
     state_data = await state.get_data()
-    category = state_data.get('category')
+    category_title, category_id = state_data.get('category_title'), state_data.get('category_id')
     await ServicesState.previous()
-    await bot.edit_message_text(category, callback.message.chat.id,
+    await bot.edit_message_text(category_title, callback.message.chat.id,
                                 callback.message.message_id,
-                                reply_markup=await get_services_inline(category))
+                                reply_markup=await get_services_inline(category_id))
 
 
 @dp.callback_query_handler(lambda c: c.data == 'back_to_categories', state=ServicesState.SERVICES)
 async def back_to_categories(callback: types.CallbackQuery, state: FSMContext):
-    manager = Manager()
-    description = await manager.file_manager.get_description()
+    owner = await DbManager().owner.get_owner()
     await ServicesState.previous()
-    await bot.edit_message_text(description, callback.message.chat.id,
+    await bot.edit_message_text(owner.description, callback.message.chat.id,
                                 callback.message.message_id,
                                 reply_markup=await get_category_menu())
 
 
 @dp.callback_query_handler(IsServicesExists(), state=ServicesState.SERVICES)
 async def get_more_details(callback: types.CallbackQuery, state: FSMContext):
-    state_data = await state.get_data()
-
-    manager = Manager()
-    service = None
-    category = state_data.get('category')
-
     await callback.answer(cache_time=5)
-    inlines = callback.message.reply_markup.values
-
-    for inline in inlines.get('inline_keyboard'):
-        if callback.data == inline[0].callback_data:
-            service = inline[0].text
-            break
-
-    data = await manager.file_manager.get_data_on_service(category, service)
-
-    await bot.edit_message_text(data['description'],
+    service = await DbManager().service.get_service_by_id(service_id=int(callback.data))
+    await bot.edit_message_text(service.description,
                                 callback.message.chat.id, callback.message.message_id,
-                                reply_markup=await get_detail_inline(data['link']))
-
+                                reply_markup=await get_detail_inline(service.link))
     await ServicesState.DETAIL.set()
-    await state.update_data(category=category, service=service)
 
 
 @dp.callback_query_handler(IsCategoryExists(), state='*')
 async def services_of_category(callback: types.CallbackQuery, state: FSMContext):
-    await bot.edit_message_text(
-        callback.data,
-        callback.message.chat.id,
-        callback.message.message_id,
-        reply_markup=await get_services_inline(callback.data)
-    )
+    category = await DbManager().category.get_category_by_id(category_id=int(callback.data))
+    await bot.edit_message_text(category.title, callback.message.chat.id,
+                                callback.message.message_id, reply_markup=await get_services_inline(category.id))
     await ServicesState.SERVICES.set()
-    await state.update_data(category=callback.data)
+    await state.update_data(category_id=category.id, category_title=category.title)

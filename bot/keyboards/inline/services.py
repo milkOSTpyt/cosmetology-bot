@@ -1,22 +1,20 @@
 from aiogram import types
 from aiogram.types import InlineKeyboardMarkup
 
-from bot.managers import Manager
+from bot.db.managers import DbManager
 
 
 async def get_category_menu() -> InlineKeyboardMarkup:
-    manager = Manager()
     categories_kb = InlineKeyboardMarkup(row_width=1)
-    for category in await manager.file_manager.get_categories():
-        categories_kb.add(types.InlineKeyboardButton(text=category, callback_data=category))
+    for category in await DbManager().category.get_all_categories():
+        categories_kb.add(types.InlineKeyboardButton(text=category.title, callback_data=category.id))
     return categories_kb
 
 
-async def get_services_inline(category: str) -> InlineKeyboardMarkup:
-    manager = Manager()
+async def get_services_inline(category_id: str) -> InlineKeyboardMarkup:
     keyboard = types.InlineKeyboardMarkup()
-    for service in await manager.file_manager.get_services_of_category(category):
-        keyboard.add(types.InlineKeyboardButton(text=service, callback_data=service[:33]))
+    for service in await DbManager().service.get_services_by_category(category_id=int(category_id)):
+        keyboard.add(types.InlineKeyboardButton(text=service.title, callback_data=service.id))
     keyboard.add(types.InlineKeyboardButton(text='↩ Назад', callback_data='back_to_categories'))
     return keyboard
 
