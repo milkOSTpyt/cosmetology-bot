@@ -42,9 +42,12 @@ class ClientManager:
                          phone_number=None) -> Optional[Client]:
         obj, created = Client.objects.update_or_create(
             telegram_id=telegram_id,
-            name=name,
-            telegram_username=telegram_username,
-            phone_number=phone_number
+            defaults={
+                "telegram_id": telegram_id,
+                "name": name,
+                "telegram_username": telegram_username,
+                "phone_number": phone_number
+            }
         )
         return obj
 

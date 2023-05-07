@@ -23,13 +23,13 @@ async def back_contact(message: types.Message, state: FSMContext):
 @dp.message_handler(content_types=types.ContentTypes.CONTACT, state=ServicesState.CONTACT)
 async def get_contact(message: types.Message, state: FSMContext):
     state_data = await state.get_data()
-    service = state_data.get('service')
+    service_title = state_data.get('service_title')
     await bot.delete_message(message.chat.id, state_data.get('consulting_message'))
     await bot.delete_message(message.chat.id, message.message_id)
 
     # send notify to admin_2
     await bot.send_message(config.ADMIN,
-                           config.NOTIFY_CONSULTING.format(service, f'+{message.contact.phone_number}'),
+                           config.NOTIFY_CONSULTING.format(service_title, f'+{message.contact.phone_number}'),
                            reply_markup=await delete_ok())
 
     message_obj = await message.answer(text=config.ALERT_CONSULTING_SUCCESS)
@@ -40,12 +40,11 @@ async def get_contact(message: types.Message, state: FSMContext):
 
 @dp.callback_query_handler(lambda c: c.data == 'consulting', state=ServicesState.DETAIL)
 async def consulting(callback: types.CallbackQuery, state: FSMContext):
-    await callback.answer(cache_time=5)
     state_data = await state.get_data()
-    service = state_data.get('service')
+    service_title = state_data.get('service_title')
     if username := callback.from_user.username:
         await bot.send_message(config.ADMIN,
-                               config.NOTIFY_CONSULTING.format(service, f'@{username}'),
+                               config.NOTIFY_CONSULTING.format(service_title, f'@{username}'),
                                reply_markup=await delete_ok())
         await callback.answer(text=config.ALERT_CONSULTING_SUCCESS, show_alert=True)
         return
@@ -89,6 +88,7 @@ async def get_more_details(callback: types.CallbackQuery, state: FSMContext):
     await bot.edit_message_text(service.description,
                                 callback.message.chat.id, callback.message.message_id,
                                 reply_markup=await get_detail_inline(service.link))
+    await state.update_data(service_id=service.id, service_title=service.title)
     await ServicesState.DETAIL.set()
 
 

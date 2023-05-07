@@ -14,6 +14,7 @@ class OwnerForm(forms.ModelForm):
 
 class ServiceForm(forms.ModelForm):
     description = forms.CharField(widget=EmojiPickerTextareaAdmin)
+    link = forms.URLField(empty_value=False)
 
     class Meta:
         model = Service
@@ -22,6 +23,7 @@ class ServiceForm(forms.ModelForm):
 
 class PromotionForm(forms.ModelForm):
     description = forms.CharField(widget=EmojiPickerTextareaAdmin)
+    link = forms.URLField(empty_value=False)
 
     class Meta:
         model = Promotion
