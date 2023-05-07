@@ -5,3 +5,4 @@ class ServicesState(StatesGroup):
     SERVICES = State()
     DETAIL = State()
     CONTACT = State()
+    PROMOTIONS = State()

@@ -13,7 +13,7 @@ async def get_category_menu() -> InlineKeyboardMarkup:
 
 async def get_services_inline(category_id: str) -> InlineKeyboardMarkup:
     keyboard = types.InlineKeyboardMarkup()
-    for service in await DbManager().service.get_services_by_category(category_id=int(category_id)):
+    for service in await DbManager().service.get_active_services_by_category(category_id=int(category_id)):
         keyboard.add(types.InlineKeyboardButton(text=service.title, callback_data=service.id))
     keyboard.add(types.InlineKeyboardButton(text='↩ Назад', callback_data='back_to_categories'))
     return keyboard

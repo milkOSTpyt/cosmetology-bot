@@ -13,7 +13,7 @@ from bot.utils import config
 
 
 @dp.message_handler(text=['Отмена'], state=ServicesState.CONTACT)
-async def back_contact(message: types.Message, state: FSMContext):
+async def back_from_sending_contact(message: types.Message, state: FSMContext):
     state_data = await state.get_data()
     await ServicesState.DETAIL.set()
     await bot.delete_message(message.chat.id, state_data.get('consulting_message'))
@@ -40,6 +40,7 @@ async def get_contact(message: types.Message, state: FSMContext):
 
 @dp.callback_query_handler(lambda c: c.data == 'consulting', state=ServicesState.DETAIL)
 async def consulting(callback: types.CallbackQuery, state: FSMContext):
+    # TODO: разделить логику
     state_data = await state.get_data()
     service_title = state_data.get('service_title')
     if username := callback.from_user.username:
@@ -67,7 +68,8 @@ async def back_to_services(callback: types.CallbackQuery, state: FSMContext):
     state_data = await state.get_data()
     category_title, category_id = state_data.get('category_title'), state_data.get('category_id')
     await ServicesState.previous()
-    await bot.edit_message_text(category_title, callback.message.chat.id,
+    await bot.edit_message_text(category_title,
+                                callback.message.chat.id,
                                 callback.message.message_id,
                                 reply_markup=await get_services_inline(category_id))
 
@@ -75,27 +77,31 @@ async def back_to_services(callback: types.CallbackQuery, state: FSMContext):
 @dp.callback_query_handler(lambda c: c.data == 'back_to_categories', state=ServicesState.SERVICES)
 async def back_to_categories(callback: types.CallbackQuery, state: FSMContext):
     owner = await DbManager().owner.get_owner()
-    await ServicesState.previous()
-    await bot.edit_message_text(owner.description, callback.message.chat.id,
+    await state.reset_state(with_data=False)
+    await bot.edit_message_text(owner.description,
+                                callback.message.chat.id,
                                 callback.message.message_id,
                                 reply_markup=await get_category_menu())
 
 
 @dp.callback_query_handler(IsServicesExists(), state=ServicesState.SERVICES)
-async def get_more_details(callback: types.CallbackQuery, state: FSMContext):
+async def send_service_detail(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer(cache_time=5)
     service = await DbManager().service.get_service_by_id(service_id=int(callback.data))
     await bot.edit_message_text(service.description,
-                                callback.message.chat.id, callback.message.message_id,
+                                callback.message.chat.id,
+                                callback.message.message_id,
                                 reply_markup=await get_detail_inline(service.link))
     await state.update_data(service_id=service.id, service_title=service.title)
     await ServicesState.DETAIL.set()
 
 
 @dp.callback_query_handler(IsCategoryExists(), state='*')
-async def services_of_category(callback: types.CallbackQuery, state: FSMContext):
+async def send_services_of_category(callback: types.CallbackQuery, state: FSMContext):
     category = await DbManager().category.get_category_by_id(category_id=int(callback.data))
-    await bot.edit_message_text(category.title, callback.message.chat.id,
-                                callback.message.message_id, reply_markup=await get_services_inline(category.id))
+    await bot.edit_message_text(category.title,
+                                callback.message.chat.id,
+                                callback.message.message_id,
+                                reply_markup=await get_services_inline(category.id))
     await ServicesState.SERVICES.set()
     await state.update_data(category_id=category.id, category_title=category.title)

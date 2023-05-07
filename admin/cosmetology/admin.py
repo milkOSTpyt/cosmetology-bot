@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import Group
 
 from . import models
-from .forms import OwnerForm, ServiceForm, PromotionForm
+from .forms import OwnerForm, ServiceForm, CategoryForm
 
 
 @admin.register(models.Owner)
@@ -24,22 +24,15 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ("title",)
     list_filter = ("title",)
     search_fields = ("title",)
+    form = CategoryForm
 
 
 @admin.register(models.Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ("title",)
-    list_filter = ("category_id__title",)
+    list_display = ("title", "is_active")
+    list_filter = ("category_id__title", "is_active")
     search_fields = ("title",)
     form = ServiceForm
-
-
-@admin.register(models.Promotion)
-class PromotionAdmin(admin.ModelAdmin):
-    list_display = ("title", "is_active")
-    list_filter = ("title", "is_active")
-    search_fields = ("title",)
-    form = PromotionForm
 
 
 admin.site.site_header = "Nastassia COSMETOLOGY"

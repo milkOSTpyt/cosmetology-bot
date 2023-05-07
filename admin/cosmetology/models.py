@@ -49,6 +49,7 @@ class Service(models.Model):
     link = models.CharField(max_length=250)
     description = models.TextField()
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.title
@@ -56,18 +57,3 @@ class Service(models.Model):
     class Meta:
         verbose_name = 'Услуга'
         verbose_name_plural = 'Услуги'
-
-
-class Promotion(models.Model):
-    title = models.CharField(max_length=80)
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    link = models.CharField(max_length=250)
-    is_active = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = 'Акция'
-        verbose_name_plural = 'Акции'

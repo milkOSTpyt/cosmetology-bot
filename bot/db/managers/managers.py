@@ -26,6 +26,11 @@ class ServiceManager:
 
     @staticmethod
     @sync_to_async
+    def get_all_active_services():
+        return Service.objects.filter(is_active=True)
+
+    @staticmethod
+    @sync_to_async
     def get_service_by_id(service_id):
         return Service.objects.get(pk=service_id)
 
@@ -33,6 +38,11 @@ class ServiceManager:
     @sync_to_async
     def get_services_by_category(category_id):
         return Service.objects.filter(category_id=category_id)
+
+    @staticmethod
+    @sync_to_async
+    def get_active_services_by_category(category_id):
+        return Service.objects.filter(category_id=category_id, is_active=True)
 
 
 class ClientManager:
@@ -67,4 +77,3 @@ class OwnerManager:
     @sync_to_async
     def get_owner():
         return Owner.objects.all().first()
-
