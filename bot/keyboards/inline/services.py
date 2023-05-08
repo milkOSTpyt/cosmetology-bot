@@ -5,10 +5,10 @@ from bot.db.managers import DbManager
 
 
 async def get_category_menu() -> InlineKeyboardMarkup:
-    categories_kb = InlineKeyboardMarkup(row_width=1)
+    keyboard = InlineKeyboardMarkup(row_width=1)
     for category in await DbManager().category.get_all_categories():
-        categories_kb.add(types.InlineKeyboardButton(text=category.title, callback_data=category.id))
-    return categories_kb
+        keyboard.add(types.InlineKeyboardButton(text=category.title, callback_data=category.id))
+    return keyboard
 
 
 async def get_services_inline(category_id: str) -> InlineKeyboardMarkup:

@@ -80,7 +80,7 @@ async def back_to_services(callback: types.CallbackQuery, state: FSMContext):
 @dp.callback_query_handler(lambda c: c.data == 'back_to_categories', state=ServicesState.SERVICES)
 async def back_to_categories(callback: types.CallbackQuery, state: FSMContext):
     owner = await DbManager().owner.get_owner()
-    await state.reset_state(with_data=False)
+    await ServicesState.previous()
     await bot.edit_message_text(owner.description,
                                 callback.message.chat.id,
                                 callback.message.message_id,
@@ -99,7 +99,7 @@ async def send_service_detail(callback: types.CallbackQuery, state: FSMContext):
     await ServicesState.DETAIL.set()
 
 
-@dp.callback_query_handler(IsCategoryExists(), state='*')
+@dp.callback_query_handler(IsCategoryExists(), state=ServicesState.CATEGORIES)
 async def send_services_of_category(callback: types.CallbackQuery, state: FSMContext):
     category = await DbManager().category.get_category_by_id(category_id=int(callback.data))
     await bot.edit_message_text(category.title,

@@ -13,6 +13,6 @@ class MessageFilter(BaseMiddleware):
             if any((current_state == 'CONTACT' and message.contact,
                     current_state == 'CONTACT' and message.text == 'Отмена')):
                 return
-        if message.text == '/start':
+        if message.text == '/start' or message.text == '/admin':
             return
         await bot.delete_message(message.chat.id, message.message_id)
