@@ -1,5 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.utils.exceptions import MessageToDeleteNotFound
 
 from bot.loader import bot
 
@@ -18,3 +19,10 @@ def error_handler(func: callable) -> callable:
         except Exception as error:
             print(f'ERROR: {error}')
     return wrapper
+
+
+async def delete_message_from_chat(chat_id, message_id):
+    try:
+        await bot.delete_message(chat_id, message_id)
+    except MessageToDeleteNotFound as error:
+        print(f'ERROR: {error} \nchad_id: {chat_id}')

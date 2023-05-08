@@ -10,31 +10,34 @@ from bot.keyboards import get_services_inline, get_detail_inline, get_contact_bu
 from bot.loader import dp, bot
 from bot.states import ServicesState
 from bot.utils import config
+from bot.utils.misc import delete_message_from_chat
 
 
 @dp.message_handler(text=['Отмена'], state=ServicesState.CONTACT)
 async def back_from_sending_contact(message: types.Message, state: FSMContext):
     state_data = await state.get_data()
     await ServicesState.DETAIL.set()
-    await bot.delete_message(message.chat.id, state_data.get('consulting_message'))
-    await bot.delete_message(message.chat.id, message.message_id)
+    await delete_message_from_chat(message.chat.id, state_data.get('consulting_message'))
+    await delete_message_from_chat(message.chat.id, message.message_id)
 
 
 @dp.message_handler(content_types=types.ContentTypes.CONTACT, state=ServicesState.CONTACT)
 async def get_contact(message: types.Message, state: FSMContext):
     state_data = await state.get_data()
     service_title = state_data.get('service_title')
-    await bot.delete_message(message.chat.id, state_data.get('consulting_message'))
-    await bot.delete_message(message.chat.id, message.message_id)
+    await delete_message_from_chat(message.chat.id, state_data.get('consulting_message'))
+    await delete_message_from_chat(message.chat.id, message.message_id)
 
     # send notify to admin_2
     await bot.send_message(config.ADMIN,
-                           config.NOTIFY_CONSULTING.format(service_title, f'+{message.contact.phone_number}'),
+                           config.NOTIFY_CONSULTING.format(
+                               service_title, f'+{message.contact.phone_number}'
+                           ),
                            reply_markup=await delete_ok())
 
     message_obj = await message.answer(text=config.ALERT_CONSULTING_SUCCESS)
-    await sleep(1.2)
-    await bot.delete_message(message.chat.id, message_obj.message_id)
+    await sleep(3)
+    await delete_message_from_chat(message.chat.id, message_obj.message_id)
     await ServicesState.DETAIL.set()
 
 
@@ -60,7 +63,7 @@ async def consulting(callback: types.CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(lambda c: c.data == 'delete_ok', state='*')
 async def delete_consulting_message(callback: types.CallbackQuery, state: FSMContext):
-    await bot.delete_message(callback.message.chat.id, callback.message.message_id)
+    await delete_message_from_chat(callback.message.chat.id, callback.message.message_id)
 
 
 @dp.callback_query_handler(lambda c: c.data == 'back_to_services', state=ServicesState.DETAIL)

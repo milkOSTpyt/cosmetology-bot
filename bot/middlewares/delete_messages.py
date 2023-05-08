@@ -10,8 +10,9 @@ class MessageFilter(BaseMiddleware):
         state = FSMContext(storage=storage, chat=message.chat.id, user=message.from_user.id)
         if cur := await state.get_state():
             current_state = cur.split(':')[1]
-            if current_state == 'CONTACT':
+            if any((current_state == 'CONTACT' and message.contact,
+                    current_state == 'CONTACT' and message.text == 'Отмена')):
                 return
-        if any((message.text == '/start', message.contact)):
+        if message.text == '/start':
             return
         await bot.delete_message(message.chat.id, message.message_id)
