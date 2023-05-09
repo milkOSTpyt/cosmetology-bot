@@ -42,7 +42,12 @@ class ServiceManager:
     @staticmethod
     @sync_to_async
     def get_active_services_by_category(category_id):
-        return Service.objects.filter(category_id=category_id, is_active=True)
+        return Service.objects.filter(category_id=category_id, is_active=True, is_discount=False)
+
+    @staticmethod
+    @sync_to_async
+    def get_active_services_by_discount():
+        return Service.objects.filter(is_active=True, is_discount=True)
 
 
 class ClientManager:

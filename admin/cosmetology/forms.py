@@ -20,10 +20,11 @@ class ServiceForm(forms.ModelForm):
     link = forms.URLField(empty_value=False, label='Ссылка для записи')
     category_id = forms.ModelChoiceField(queryset=Category.objects.all(), label='Категория')
     is_active = forms.BooleanField(label='Запись открыта', required=False)
+    is_discount = forms.BooleanField(label='Скидка', required=False)
 
     class Meta:
         model = Service
-        fields = ("title", "link", "description", "category_id", "is_active")
+        fields = ("title", "link", "description", "category_id", "is_active", "is_discount")
 
 
 class CategoryForm(forms.ModelForm):

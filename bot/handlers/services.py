@@ -71,10 +71,13 @@ async def back_to_services(callback: types.CallbackQuery, state: FSMContext):
     state_data = await state.get_data()
     category_title, category_id = state_data.get('category_title'), state_data.get('category_id')
     await ServicesState.previous()
-    await bot.edit_message_text(category_title,
-                                callback.message.chat.id,
-                                callback.message.message_id,
-                                reply_markup=await get_services_inline(category_id))
+    if state_data.get('discount_services') is True:
+        await bot.edit_message_text('Акции 🔥', callback.message.chat.id,
+                                    callback.message.message_id, reply_markup=await get_services_inline())
+        await state.update_data(discount_services=False)
+    else:
+        await bot.edit_message_text(category_title, callback.message.chat.id,
+                                    callback.message.message_id, reply_markup=await get_services_inline(category_id))
 
 
 @dp.callback_query_handler(lambda c: c.data == 'back_to_categories', state=ServicesState.SERVICES)
@@ -97,6 +100,16 @@ async def send_service_detail(callback: types.CallbackQuery, state: FSMContext):
                                 reply_markup=await get_detail_inline(service.link))
     await state.update_data(service_id=service.id, service_title=service.title)
     await ServicesState.DETAIL.set()
+
+
+@dp.callback_query_handler(lambda c: c.data == 'services_by_discount', state=ServicesState.CATEGORIES)
+async def send_services_by_discount(callback: types.CallbackQuery, state: FSMContext):
+    await ServicesState.SERVICES.set()
+    await bot.edit_message_text('Акции 🔥',
+                                callback.message.chat.id,
+                                callback.message.message_id,
+                                reply_markup=await get_services_inline())
+    await state.update_data(discount_services=True)
 
 
 @dp.callback_query_handler(IsCategoryExists(), state=ServicesState.CATEGORIES)

@@ -50,6 +50,7 @@ class Service(models.Model):
     description = models.TextField()
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
+    is_discount = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
