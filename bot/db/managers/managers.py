@@ -21,6 +21,17 @@ class CategoryManager:
 class ServiceManager:
     @staticmethod
     @sync_to_async
+    def update_discount(service_id):
+        service = Service.objects.get(pk=service_id)
+        if service.is_active:
+            service.is_active = False
+        else:
+            service.is_active = True
+        service.save()
+        return service
+
+    @staticmethod
+    @sync_to_async
     def get_all_services():
         return Service.objects.all()
 
@@ -48,6 +59,11 @@ class ServiceManager:
     @sync_to_async
     def get_active_services_by_discount():
         return Service.objects.filter(is_active=True, is_discount=True)
+
+    @staticmethod
+    @sync_to_async
+    def get_all_services_by_discount():
+        return Service.objects.filter(is_discount=True)
 
 
 class ClientManager:

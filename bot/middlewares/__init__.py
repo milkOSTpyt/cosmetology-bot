@@ -1,5 +1,5 @@
 from bot.loader import dp
-from bot.middlewares.delete_messages import MessageFilter
+from bot.middlewares.message_filter import MessageFilter
 
 
 dp.middleware.setup(MessageFilter())

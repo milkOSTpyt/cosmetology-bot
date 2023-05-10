@@ -6,7 +6,7 @@ from aiogram.dispatcher import FSMContext
 from bot.db.managers import DbManager
 from bot.filters import IsCategoryExists
 from bot.filters.category_exists import IsServicesExists
-from bot.keyboards import get_services_inline, get_detail_inline, get_contact_button, delete_ok, get_category_menu
+from bot import keyboards
 from bot.loader import dp, bot
 from bot.states import ServicesState
 from bot.utils import config
@@ -33,7 +33,7 @@ async def get_contact(message: types.Message, state: FSMContext):
                            config.NOTIFY_CONSULTING.format(
                                service_title, f'+{message.contact.phone_number}'
                            ),
-                           reply_markup=await delete_ok())
+                           reply_markup=await keyboards.delete_ok())
 
     message_obj = await message.answer(text=config.ALERT_CONSULTING_SUCCESS)
     await sleep(3)
@@ -49,14 +49,14 @@ async def consulting(callback: types.CallbackQuery, state: FSMContext):
     if username := callback.from_user.username:
         await bot.send_message(config.ADMIN,
                                config.NOTIFY_CONSULTING.format(service_title, f'@{username}'),
-                               reply_markup=await delete_ok())
+                               reply_markup=await keyboards.delete_ok())
         await callback.answer(text=config.ALERT_CONSULTING_SUCCESS, show_alert=True)
         return
 
     await ServicesState.CONTACT.set()
     message_obj = await callback.message.answer(
         'Нажмите кнопку ниже, чтобы отправить контакт',
-        reply_markup=await get_contact_button()
+        reply_markup=await keyboards.get_contact_button()
     )
     await state.update_data(consulting_message=message_obj.message_id)
 
@@ -73,11 +73,13 @@ async def back_to_services(callback: types.CallbackQuery, state: FSMContext):
     await ServicesState.previous()
     if state_data.get('discount_services') is True:
         await bot.edit_message_text('Акции 🔥', callback.message.chat.id,
-                                    callback.message.message_id, reply_markup=await get_services_inline())
+                                    callback.message.message_id, reply_markup=await keyboards.get_services_inline())
         await state.update_data(discount_services=False)
     else:
-        await bot.edit_message_text(category_title, callback.message.chat.id,
-                                    callback.message.message_id, reply_markup=await get_services_inline(category_id))
+        await bot.edit_message_text(category_title,
+                                    callback.message.chat.id,
+                                    callback.message.message_id,
+                                    reply_markup=await keyboards.get_services_inline(category_id))
 
 
 @dp.callback_query_handler(lambda c: c.data == 'back_to_categories', state=ServicesState.SERVICES)
@@ -87,7 +89,7 @@ async def back_to_categories(callback: types.CallbackQuery, state: FSMContext):
     await bot.edit_message_text(owner.description,
                                 callback.message.chat.id,
                                 callback.message.message_id,
-                                reply_markup=await get_category_menu())
+                                reply_markup=await keyboards.get_category_menu())
 
 
 @dp.callback_query_handler(IsServicesExists(), state=ServicesState.SERVICES)
@@ -97,7 +99,7 @@ async def send_service_detail(callback: types.CallbackQuery, state: FSMContext):
     await bot.edit_message_text(service.description,
                                 callback.message.chat.id,
                                 callback.message.message_id,
-                                reply_markup=await get_detail_inline(service.link))
+                                reply_markup=await keyboards.get_detail_inline(service.link))
     await state.update_data(service_id=service.id, service_title=service.title)
     await ServicesState.DETAIL.set()
 
@@ -108,7 +110,7 @@ async def send_services_by_discount(callback: types.CallbackQuery, state: FSMCon
     await bot.edit_message_text('Акции 🔥',
                                 callback.message.chat.id,
                                 callback.message.message_id,
-                                reply_markup=await get_services_inline())
+                                reply_markup=await keyboards.get_services_inline())
     await state.update_data(discount_services=True)
 
 
@@ -118,6 +120,6 @@ async def send_services_of_category(callback: types.CallbackQuery, state: FSMCon
     await bot.edit_message_text(category.title,
                                 callback.message.chat.id,
                                 callback.message.message_id,
-                                reply_markup=await get_services_inline(category.id))
+                                reply_markup=await keyboards.get_services_inline(category.id))
     await ServicesState.SERVICES.set()
     await state.update_data(category_id=category.id, category_title=category.title)

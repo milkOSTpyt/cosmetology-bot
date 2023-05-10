@@ -20,7 +20,7 @@ class ServiceForm(forms.ModelForm):
     link = forms.URLField(empty_value=False, label='Ссылка для записи')
     category_id = forms.ModelChoiceField(queryset=Category.objects.all(), label='Категория')
     is_active = forms.BooleanField(label='Запись открыта', required=False)
-    is_discount = forms.BooleanField(label='Скидка', required=False)
+    is_discount = forms.BooleanField(label='Акции', required=False)
 
     class Meta:
         model = Service

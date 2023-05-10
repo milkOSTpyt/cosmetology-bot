@@ -11,7 +11,7 @@ from bot.states.admin import AdminState
 from bot.utils.misc import delete_old_message, delete_message_from_chat
 
 
-async def prepare_chat_before_command(state, message):
+async def _prepare_chat_before_command(state, message):
     state_data = await state.get_data()
     await delete_message_from_chat(message.chat.id, state_data.get('description_message'))
     await delete_message_from_chat(message.chat.id, state_data.get('consulting_message'))
@@ -27,7 +27,7 @@ async def start_command(message: types.Message, state: FSMContext):
         telegram_username=message.from_user.username,
         phone_number=message.contact.phone_number if message.contact else None
     )  # Add or update client in database
-    await prepare_chat_before_command(state, message)
+    await _prepare_chat_before_command(state, message)
     await delete_old_message(message_obj=message, state=state)
     await state.reset_state()
     owner = await DbManager().owner.get_owner()
@@ -39,8 +39,8 @@ async def start_command(message: types.Message, state: FSMContext):
 
 @dp.message_handler(Command('admin'), IsAdmin(), state='*')
 async def admin_command(message: types.Message, state: FSMContext):
-    await prepare_chat_before_command(state, message)
     message_obj = await message.answer(text='Администрирование', reply_markup=await get_admin_menu())
+    await _prepare_chat_before_command(state, message)
+    await AdminState.MAIN_MENU.set()
     await delete_message_from_chat(message.chat.id, message.message_id)  # delete /admin message
     await state.update_data(admin_message=message_obj.message_id)
-    await AdminState.MAIN_MENU.set()

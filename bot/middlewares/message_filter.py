@@ -3,6 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.middlewares import BaseMiddleware
 
 from bot.loader import bot, storage
+from bot.utils.config import ADMIN
 
 
 class MessageFilter(BaseMiddleware):
@@ -13,6 +14,6 @@ class MessageFilter(BaseMiddleware):
             if any((current_state == 'CONTACT' and message.contact,
                     current_state == 'CONTACT' and message.text == 'Отмена')):
                 return
-        if message.text == '/start' or message.text == '/admin':
+        if message.text == '/start' or (message.text == '/admin' and message.from_user.id == ADMIN):
             return
         await bot.delete_message(message.chat.id, message.message_id)
