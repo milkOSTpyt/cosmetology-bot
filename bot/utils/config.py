@@ -2,7 +2,6 @@ from decouple import config
 
 
 BOT_TOKEN = config('BOT_TOKEN')
-FILE = config('FILE')
 ADMIN = config('ADMIN')
 
 
