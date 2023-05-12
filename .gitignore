@@ -132,3 +132,4 @@ dmypy.json
 
 admin/static
 admin/media
+logs/

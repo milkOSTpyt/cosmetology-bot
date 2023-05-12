@@ -72,8 +72,10 @@ async def back_to_services(callback: types.CallbackQuery, state: FSMContext):
     category_title, category_id = state_data.get('category_title'), state_data.get('category_id')
     await ServicesState.previous()
     if state_data.get('discount_services') is True:
-        await bot.edit_message_text('Акции 🔥', callback.message.chat.id,
-                                    callback.message.message_id, reply_markup=await keyboards.get_services_inline())
+        await bot.edit_message_text('Акции 🔥',
+                                    callback.message.chat.id,
+                                    callback.message.message_id,
+                                    reply_markup=await keyboards.get_services_inline())
         await state.update_data(discount_services=False)
     else:
         await bot.edit_message_text(category_title,
