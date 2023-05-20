@@ -14,7 +14,7 @@ from pathlib import Path
 import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-from decouple import config
+from decouple import config, strtobool
 
 # sys.path.append(r'C:\Users\afili\PycharmProjects\cosmetology-bot')
 
@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG')
+DEBUG = strtobool(config('DEBUG'))
 
 ALLOWED_HOSTS = ["*"]
 
@@ -96,7 +96,7 @@ DATABASES = {
         'NAME': config('DB_NAME', default=str(BASE_DIR / "db.sqlite3")),
         'USER': config('DB_USER', default=''),
         'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': config('DB_HOST', default='database'),
+        'HOST': config('DB_HOST', default='127.0.0.1'),
         'PORT': config('DB_PORT', default='3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',

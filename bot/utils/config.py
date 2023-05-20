@@ -1,7 +1,7 @@
-from decouple import config
+from decouple import config, strtobool
 
 
-DEBUG = config('DEBUG')
+DEBUG = strtobool(config('DEBUG'))
 
 # TG BOT
 BOT_TOKEN = config('BOT_TOKEN')

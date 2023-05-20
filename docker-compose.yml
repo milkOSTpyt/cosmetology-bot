@@ -10,10 +10,11 @@ services:
       - DB_USER=$DB_USER
       - DB_PASSWORD=$DB_PASSWORD
       - DB_NAME=$DB_NAME
+      - DB_HOST=database
       - BOT_TOKEN=$BOT_TOKEN
       - ADMIN=$ADMIN
       - REDIS_HOST=redis
-      - DEBUG=$DEBUG
+      - DEBUG=false
     restart: unless-stopped
     volumes:
       - "./:/app"
@@ -35,7 +36,7 @@ services:
       - DB_PASSWORD=$DB_PASSWORD
       - DB_NAME=$DB_NAME
       - DB_HOST=database
-      - DEBUG=$DEBUG
+      - DEBUG=false
       - SECRET_KEY=$SECRET_KEY
     ports:
       - "8000:8000"
