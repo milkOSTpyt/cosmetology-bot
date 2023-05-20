@@ -133,3 +133,7 @@ dmypy.json
 admin/static
 admin/media
 logs/
+
+# volumes
+database
+redis_data

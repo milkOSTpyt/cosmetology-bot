@@ -1,0 +1,77 @@
+version: '3.8'
+services:
+
+  tg_bot:
+    container_name: tg_bot
+    build: .
+    command: python start_bot.py
+    environment:
+      - DOCKER=True
+      - DB_USER=$DB_USER
+      - DB_PASSWORD=$DB_PASSWORD
+      - DB_NAME=$DB_NAME
+      - BOT_TOKEN=$BOT_TOKEN
+      - ADMIN=$ADMIN
+      - REDIS_HOST=redis
+      - DEBUG=$DEBUG
+    restart: unless-stopped
+    volumes:
+      - "./:/app"
+      - "./logs:/app/logs"
+    depends_on:
+      - django_admin
+      - redis
+
+  django_admin:
+    container_name: django_admin
+    build: .
+    command: >
+      sh -c "python start_admin.py collectstatic --noinput
+             python start_admin.py migrate
+             gunicorn --workers 2 --timeout 1600 --bind 0.0.0.0:8000 admin.admin.wsgi"
+    environment:
+      - DOCKER=True
+      - DB_USER=$DB_USER
+      - DB_PASSWORD=$DB_PASSWORD
+      - DB_NAME=$DB_NAME
+      - DB_HOST=database
+      - DEBUG=$DEBUG
+      - SECRET_KEY=$SECRET_KEY
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    volumes:
+      - "./:/app"
+      - "./logs:/app/logs"
+    depends_on:
+        database:
+          condition: service_healthy
+
+  database:
+    image: mysql:8
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    container_name: database
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=$DB_PASSWORD
+      - MYSQL_USER=$DB_USER
+      - MYSQL_DATABASE=$DB_NAME
+      - MYSQL_PASSWORD=$DB_PASSWORD
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./database:/var/lib/mysql"
+    healthcheck:
+      test: mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD -e 'SHOW DATABASES;'
+      timeout: 30s
+      interval: 15s
+      retries: 3
+
+  redis:
+    image: redis:7.0.5-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - "./redis_data:/data"
