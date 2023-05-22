@@ -22,6 +22,11 @@ services:
     depends_on:
       - django_admin
       - redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "25m"
+        max-file: "2"
 
   django_admin:
     container_name: django_admin
@@ -29,7 +34,7 @@ services:
     command: >
       sh -c "python start_admin.py collectstatic --noinput
              python start_admin.py migrate
-             gunicorn --workers 2 --timeout 1600 --bind 0.0.0.0:8000 admin.admin.wsgi"
+             gunicorn --workers 2 --timeout 1600 --bind 0.0.0.0:8000 admin.admin.wsgi --reload"
     environment:
       - DOCKER=True
       - DB_USER=$DB_USER
@@ -42,11 +47,16 @@ services:
       - "8000:8000"
     restart: unless-stopped
     volumes:
-      - "./:/app"
+      - "./static_volume:/app/admin/static"
       - "./logs:/app/logs"
     depends_on:
         database:
           condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "25m"
+        max-file: "2"
 
   database:
     image: mysql:8
@@ -73,6 +83,20 @@ services:
     container_name: redis
     restart: always
     ports:
-      - '6379:6379'
+      - "6379:6379"
     volumes:
       - "./redis_data:/data"
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - "./static_volume:/app/admin/static"
+    ports:
+      - "8031:80"
+    depends_on:
+      - django_admin
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "25m"
+        max-file: "2"

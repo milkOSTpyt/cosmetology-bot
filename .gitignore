@@ -137,3 +137,4 @@ logs/
 # volumes
 database
 redis_data
+static_volume
