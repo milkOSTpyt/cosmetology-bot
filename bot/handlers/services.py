@@ -76,7 +76,6 @@ async def back_to_services(callback: types.CallbackQuery, state: FSMContext):
                                     callback.message.chat.id,
                                     callback.message.message_id,
                                     reply_markup=await keyboards.get_services_inline())
-        await state.update_data(discount_services=False)
     else:
         await bot.edit_message_text(category_title,
                                     callback.message.chat.id,
@@ -86,12 +85,15 @@ async def back_to_services(callback: types.CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(lambda c: c.data == 'back_to_categories', state=ServicesState.SERVICES)
 async def back_to_categories(callback: types.CallbackQuery, state: FSMContext):
+    state_data = await state.get_data()
     owner = await DbManager().owner.get_owner()
     await ServicesState.previous()
     await bot.edit_message_text(owner.description,
                                 callback.message.chat.id,
                                 callback.message.message_id,
                                 reply_markup=await keyboards.get_category_menu())
+    if state_data.get('discount_services') is not None:
+        await state.update_data(discount_services=False)
 
 
 @dp.callback_query_handler(IsServicesExists(), state=ServicesState.SERVICES)
