@@ -6,3 +6,4 @@ loguru==0.7.0
 mysqlclient==2.0.3
 gunicorn
 redis
+aioredis==2.0.1
