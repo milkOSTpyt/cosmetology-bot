@@ -5,6 +5,8 @@ class Owner(models.Model):
     full_name = models.CharField(max_length=100)
     description = models.TextField()
     telegram_id = models.IntegerField()
+    location_latitude = models.FloatField(default=0)
+    location_longitude = models.FloatField(default=0)
 
     def __str__(self):
         return self.full_name

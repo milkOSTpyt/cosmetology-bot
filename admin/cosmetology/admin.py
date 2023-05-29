@@ -7,7 +7,7 @@ from .forms import OwnerForm, ServiceForm, CategoryForm
 
 @admin.register(models.Owner)
 class OwnerAdmin(admin.ModelAdmin):
-    list_display = ("full_name", "telegram_id")
+    list_display = ("full_name", "telegram_id", "location_latitude", "location_longitude")
     form = OwnerForm
 
 

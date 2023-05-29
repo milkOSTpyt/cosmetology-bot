@@ -9,6 +9,7 @@ async def get_category_menu() -> InlineKeyboardMarkup:
     for category in await DbManager().category.get_all_categories():
         keyboard.add(types.InlineKeyboardButton(text=category.title, callback_data=category.id))
     keyboard.add(types.InlineKeyboardButton(text='Акции 🔥', callback_data='services_by_discount'))
+    keyboard.add(types.InlineKeyboardButton(text='Месторасположение 📍', callback_data='location'))
     return keyboard
 
 

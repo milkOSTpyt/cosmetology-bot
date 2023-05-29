@@ -108,6 +108,18 @@ async def send_service_detail(callback: types.CallbackQuery, state: FSMContext):
     await ServicesState.DETAIL.set()
 
 
+@dp.callback_query_handler(lambda c: c.data == 'location', state=ServicesState.CATEGORIES)
+async def send_location(callback: types.CallbackQuery, state: FSMContext):
+    owner = await DbManager().owner.get_owner()
+    await callback.answer(cache_time=1)
+    await bot.send_location(
+        callback.message.chat.id,
+        latitude=owner.location_latitude,
+        longitude=owner.location_longitude,
+        reply_markup=await keyboards.delete_ok()
+    )
+
+
 @dp.callback_query_handler(lambda c: c.data == 'services_by_discount', state=ServicesState.CATEGORIES)
 async def send_services_by_discount(callback: types.CallbackQuery, state: FSMContext):
     await ServicesState.SERVICES.set()

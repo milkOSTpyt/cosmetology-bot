@@ -8,10 +8,12 @@ class OwnerForm(forms.ModelForm):
     full_name = forms.CharField(label='Имя')
     description = forms.CharField(widget=EmojiPickerTextareaAdmin, label='Описание')
     telegram_id = forms.IntegerField(label='Telegram id')
+    location_longitude = forms.FloatField(label='Месторасположение - долгота')
+    location_latitude = forms.FloatField(label='Месторасположение - широта')
 
     class Meta:
         model = Owner
-        fields = ("full_name", "description", "telegram_id")
+        fields = ("full_name", "description", "telegram_id", "location_longitude", "location_latitude")
 
 
 class ServiceForm(forms.ModelForm):
