@@ -1,6 +1,6 @@
 # Cosmetology bot with Django admin
 
-![](https://i.ibb.co/wWYKv46/screen-20230530-160655-2-7-I6s-W08s-1.gif)
+![alt tag](https://i.ibb.co/wWYKv46/screen-20230530-160655-2-7-I6s-W08s-1.gif)
 
 ### Deploy project ( docker-compose )
 Install docker and docker-compose and next run command:
