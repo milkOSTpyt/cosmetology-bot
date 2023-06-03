@@ -13,10 +13,10 @@ class OwnerAdmin(admin.ModelAdmin):
 
 @admin.register(models.Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ("name", "telegram_username", "phone_number", "created_at")
+    list_display = ("name", "telegram_username", "chat_id", "phone_number", "created_at")
     list_filter = ("name",)
     search_fields = ("name",)
-    readonly_fields = ('telegram_id', 'name', 'telegram_username', 'phone_number')
+    readonly_fields = ("telegram_id", "name", "telegram_username", "chat_id", "phone_number")
 
 
 @admin.register(models.Category)

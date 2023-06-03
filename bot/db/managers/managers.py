@@ -71,12 +71,13 @@ class ServiceManager:
 class ClientManager:
     @staticmethod
     @custom_sync_to_async
-    def update_or_create(telegram_id, name, telegram_username=None,
+    def update_or_create(telegram_id, chat_id,  name, telegram_username=None,
                          phone_number=None) -> Optional[Client]:
         obj, created = Client.objects.update_or_create(
             telegram_id=telegram_id,
             defaults={
                 "telegram_id": telegram_id,
+                "chat_id": chat_id,
                 "name": name,
                 "telegram_username": telegram_username,
                 "phone_number": phone_number

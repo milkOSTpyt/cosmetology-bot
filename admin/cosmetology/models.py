@@ -16,8 +16,8 @@ class Owner(models.Model):
             super().save(*args, **kwargs)
 
     class Meta:
-        verbose_name = 'Информация администратора'
-        verbose_name_plural = 'Информация администратора'
+        verbose_name = "Информация администратора"
+        verbose_name_plural = "Информация администратора"
 
 
 class Client(models.Model):
@@ -25,14 +25,15 @@ class Client(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     telegram_username = models.CharField(max_length=70, null=True, blank=True, unique=True)
     phone_number = models.CharField(max_length=50, null=True, blank=True)
+    chat_id = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.name} {self.telegram_id}'
 
     class Meta:
-        verbose_name = 'Клиент'
-        verbose_name_plural = 'Клиенты'
+        verbose_name = "Клиент"
+        verbose_name_plural = "Клиенты"
 
 
 class Category(models.Model):
@@ -42,8 +43,8 @@ class Category(models.Model):
         return self.title
 
     class Meta:
-        verbose_name = 'Категория'
-        verbose_name_plural = 'Категории'
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
 
 
 class Service(models.Model):
@@ -58,5 +59,5 @@ class Service(models.Model):
         return self.title
 
     class Meta:
-        verbose_name = 'Услуга'
-        verbose_name_plural = 'Услуги'
+        verbose_name = "Услуга"
+        verbose_name_plural = "Услуги"

@@ -12,7 +12,8 @@ class MessageFilter(BaseMiddleware):
         if cur := await state.get_state():
             current_state = cur.split(':')[1]
             if any((current_state == 'CONTACT' and message.contact,
-                    current_state == 'CONTACT' and message.text == 'Отмена')):
+                    current_state == 'CONTACT' and message.text == 'Отмена',
+                    current_state == 'INPUT_MESSAGE_STATE')):
                 return
         if message.text == '/start' or (message.text == '/admin' and message.from_user.id == ADMIN):
             return
