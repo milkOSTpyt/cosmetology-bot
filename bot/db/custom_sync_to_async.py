@@ -13,6 +13,6 @@ class CustomSyncToAsync(SyncToAsync):
         try:
             return super().thread_handler(loop, *args, **kwargs)
         except Exception as error:
-            logger.success(f'{error}')
+            logger.info(f'{error}')
         finally:
             close_old_connections()
