@@ -6,7 +6,7 @@ from bot.filters import IsServicesExists
 from bot import keyboards
 from bot.loader import dp, bot
 from bot.states.admin import AdminState, DiscountState, SendMessageState
-from bot.utils.misc import SendMessage
+from bot.utils.misc import SendMessage, delete_message_from_chat
 
 
 @dp.callback_query_handler(lambda c: c.data == "list_services_by_discount", state=DiscountState.PROMOTIONS_MENU)
@@ -105,6 +105,7 @@ async def checking_message(message: types.Message, state: FSMContext):
                                 main_message_id,
                                 reply_markup=await keyboards.get_approved_send_message())
     await state.update_data(message_to_send=message.text)
+    await delete_message_from_chat(chat_id=message.chat.id, message_id=message.message_id)
 
 
 @dp.callback_query_handler(lambda c: c.data == "send_messages", state=AdminState.MAIN_MENU)
