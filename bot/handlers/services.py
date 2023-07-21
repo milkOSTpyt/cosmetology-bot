@@ -41,6 +41,15 @@ async def get_contact(message: types.Message, state: FSMContext):
     await ServicesState.DETAIL.set()
 
 
+@dp.callback_query_handler(lambda c: c.data == 'price', state=ServicesState.DETAIL)
+async def get_price(callback: types.CallbackQuery, state: FSMContext):
+    state_data = await state.get_data()
+    service_id = state_data.get('service_id')
+    service = await DbManager().service.get_service_by_id(service_id=service_id)
+    price = f"{service.price} р." if service.price else "Уточняйте цену"
+    await callback.answer(text=price, show_alert=True)
+
+
 @dp.callback_query_handler(lambda c: c.data == 'consulting', state=ServicesState.DETAIL)
 async def consulting(callback: types.CallbackQuery, state: FSMContext):
     # TODO: разделить логику

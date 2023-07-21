@@ -51,6 +51,7 @@ class Service(models.Model):
     title = models.CharField(max_length=80)
     link = models.CharField(max_length=250)
     description = models.TextField()
+    price = models.FloatField(null=True, blank=True)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
     is_discount = models.BooleanField(default=False)

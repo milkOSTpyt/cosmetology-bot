@@ -26,14 +26,18 @@ async def get_services_inline(category_id: str = None) -> InlineKeyboardMarkup:
 
 
 async def get_detail_inline(link: str) -> InlineKeyboardMarkup:
-    actions = ['Записаться', 'Онлайн-консультация']
+    actions = {
+        "Онлайн-консультация": "consulting",
+        "Стоимость": "price",
+        "Записаться": "note",
+        "↩ Назад": "back_to_services"
+    }
     keyboard = InlineKeyboardMarkup(row_width=3)
-    for action in actions:
+    for action in list(actions.keys()):
         if action == 'Записаться':
             keyboard.add(types.InlineKeyboardButton(text=action, callback_data=action, url=link))
             continue
-        keyboard.add(types.InlineKeyboardButton(text=action, callback_data='consulting'))
-    keyboard.add(types.InlineKeyboardButton(text='↩ Назад', callback_data='back_to_services'))
+        keyboard.add(types.InlineKeyboardButton(text=action, callback_data=actions[action]))
     return keyboard
 
 

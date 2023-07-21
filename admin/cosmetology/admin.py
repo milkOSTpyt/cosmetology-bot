@@ -29,7 +29,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(models.Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ("title", "is_active", "is_discount")
+    list_display = ("title", "is_active", "is_discount", "price")
     list_filter = ("category_id__title", "is_active", "is_discount")
     search_fields = ("title",)
     form = ServiceForm

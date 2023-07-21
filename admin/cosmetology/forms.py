@@ -18,6 +18,7 @@ class OwnerForm(forms.ModelForm):
 
 class ServiceForm(forms.ModelForm):
     title = forms.CharField(widget=EmojiPickerTextInputAdmin, label='Название')
+    price = forms.FloatField(label='Цена', required=False)
     description = forms.CharField(widget=EmojiPickerTextareaAdmin, label='Описание')
     link = forms.URLField(empty_value=False, label='Ссылка для записи')
     category_id = forms.ModelChoiceField(queryset=Category.objects.all(), label='Категория')
@@ -26,7 +27,7 @@ class ServiceForm(forms.ModelForm):
 
     class Meta:
         model = Service
-        fields = ("title", "link", "description", "category_id", "is_active", "is_discount")
+        fields = ("title", "price", "link", "description", "category_id", "is_active", "is_discount")
 
 
 class CategoryForm(forms.ModelForm):
